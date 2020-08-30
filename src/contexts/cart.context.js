@@ -7,10 +7,13 @@ const CartContext = createContext(null);
 const cartItems = localStorage.getItem('cart');
 const cart = cartItems ? JSON.parse(cartItems) : [];
 
+const setCurrency = localStorage.getItem('currency');
+const currency = setCurrency || 'USD';
+
 const initialState = {
   cart,
   showCart: false,
-  currency: 'USD',
+  currency,
 };
 
 const CartProvider = ({ children }) => {

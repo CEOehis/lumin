@@ -9,14 +9,6 @@ export const types = {
   UPDATE_CART_PRICES: 'UPDATE_CART_PRICES',
 };
 
-function getUpdatedProductPrices(products) {
-  const result = {};
-  products.forEach((product) => {
-    result[product.id] = product.price;
-  });
-  return result;
-}
-
 const cart = (state, action) => {
   let newState;
 
@@ -69,16 +61,6 @@ const cart = (state, action) => {
       });
       localStorage.setItem('cart', JSON.stringify(newState));
       return newState;
-    case types.UPDATE_CART_PRICES:
-      const idToPricesMap = getUpdatedProductPrices(action.payload);
-      newState = state.map((item) => {
-        return {
-          ...item,
-          price: idToPricesMap[item.id],
-        };
-      });
-      localStorage.setItem('cart', JSON.stringify(newState));
-      return newState;
     default:
       return state;
   }
@@ -101,6 +83,7 @@ const cartReducer = (state, action) => {
         showCart: action.payload,
       };
     case types.SET_CURRENCY:
+      localStorage.setItem('currency', action.payload);
       return {
         ...state,
         currency: action.payload,

@@ -3,6 +3,7 @@ import { useQuery, gql } from '@apollo/client';
 import { CartContext } from '../contexts/cart.context';
 import { setDisplayCart, setCurrency } from '../actions/cart.action';
 import CartItem from './CartItem';
+import { ProductsContext } from '../contexts/products.context';
 
 const CURRENCY = gql`
   query GetCurrency {
@@ -10,9 +11,25 @@ const CURRENCY = gql`
   }
 `;
 
+/**
+ * Map products to product id to ensure fast look ups
+ * @param {Array} products
+ * @returns {Object} table of product id mapped to product
+ */
+function mapProductIdToProduct(products) {
+  const result = {};
+  products.forEach((product) => {
+    result[product.id] = product;
+  });
+  return result;
+}
+
 function Cart() {
-  const { cartState, dispatch } = useContext(CartContext);
-  const { currency, cart, showCart } = cartState;
+  const {
+    cartState: { currency, cart, showCart },
+    dispatch,
+  } = useContext(CartContext);
+  const { products, loading, error } = useContext(ProductsContext);
 
   const formatter = new Intl.NumberFormat(window.navigator.language, {
     style: 'currency',
@@ -21,19 +38,44 @@ function Cart() {
   });
 
   const { data } = useQuery(CURRENCY);
-  const [currencyList, setCurrencyList] = useState(['USD']);
+
+  const localCurrencyList = localStorage.getItem('currencyList');
+  const [currencyList, setCurrencyList] = useState(
+    localCurrencyList ? JSON.parse(localCurrencyList) : ['USD']
+  );
 
   useEffect(() => {
-    setCurrencyList((data && data.currency) || ['USD']);
-  }, [data]);
+    setCurrencyList(
+      (data && data.currency) || (localCurrencyList ? JSON.parse(localCurrencyList) : ['USD'])
+    );
+
+    localStorage.setItem('currencyList', JSON.stringify(currencyList));
+  }, [data, currencyList, localCurrencyList, currency]);
+
+  const productList = mapProductIdToProduct(products);
 
   function toggleCart() {
     dispatch(setDisplayCart(!showCart));
   }
 
+  if (loading)
+    return (
+      <div className={`cart ${showCart ? 'cart__expanded' : 'cart__collapsed'}`}>
+        <p>Loading...</p>
+      </div>
+    );
+  if (error) {
+    localStorage.setItem('currency', 'USD');
+    return (
+      <div className={`cart ${showCart ? 'cart__expanded' : 'cart__collapsed'}`}>
+        <p>Error</p>
+      </div>
+    );
+  }
+
   function calculateSubTotal() {
     return cart.reduce((acc, curr) => {
-      return acc + curr.price * curr.qty;
+      return acc + productList[curr.id].price * curr.qty;
     }, 0);
   }
 
@@ -50,6 +92,7 @@ function Cart() {
           onChange={(e) => {
             dispatch(setCurrency(e.target.value));
           }}
+          value={currency}
           name="currency"
         >
           {currencyList.map((item) => (
@@ -61,10 +104,10 @@ function Cart() {
       </div>
       <div className="cart__items">
         {!cart.length ? (
-          <p className="empyt-cart">Your cart is empty. Let&apos;s Change that!</p>
+          <p className="empty-cart">Your cart is empty. Let&apos;s Change that!</p>
         ) : null}
         {cart.map((cartItem) => (
-          <CartItem key={cartItem.id} item={cartItem} />
+          <CartItem key={cartItem.id} item={{ ...productList[cartItem.id], qty: cartItem.qty }} />
         ))}
       </div>
       {cart.length ? (

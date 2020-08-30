@@ -187,7 +187,7 @@ button {
   width: 30%;
 }
 
-.empyt-cart {
+.empty-cart {
   text-align: center;
 }
 
@@ -278,8 +278,4 @@ button {
   section {
     background: #e2e6e3;
   }
-}
-
-* {
-  /* outline: 1px solid; */
 }

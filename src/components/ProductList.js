@@ -1,10 +1,9 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import Product from './Product';
 import { CartContext } from '../contexts/cart.context';
-import { updateCartPrices } from '../actions/cart.action';
 
-const PRODUCTS = gql`
+export const PRODUCTS = gql`
   query GetProducts($currency: Currency!) {
     products {
       id
@@ -16,17 +15,11 @@ const PRODUCTS = gql`
 `;
 
 function ProductList() {
-  const { cartState, dispatch } = useContext(CartContext);
+  const { cartState } = useContext(CartContext);
   const { currency } = cartState;
-  const { loading, error, data, refetch } = useQuery(PRODUCTS, {
+  const { loading, error, data } = useQuery(PRODUCTS, {
     variables: { currency },
   });
-
-  useEffect(() => {
-    refetch().then((result) => {
-      dispatch(updateCartPrices(result.data.products));
-    });
-  }, [currency, refetch, dispatch]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
