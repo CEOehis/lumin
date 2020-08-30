@@ -90,6 +90,7 @@ button {
   overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
+  z-index: 1;
 }
 
 .cart__header {
@@ -244,6 +245,20 @@ button {
   display: flex;
   justify-content: space-between;
   padding: 15px 0;
+}
+
+.nav__cart-toggle {
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  background: white;
+  text-align: right;
+}
+
+.nav__cart-toggle button {
+  padding: 10px 30px;
 }
 
 /* Media Queries */

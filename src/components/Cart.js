@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { CartContext } from '../contexts/cart.context';
 import { setDisplayCart, setCurrency } from '../actions/cart.action';
@@ -37,20 +37,7 @@ function Cart() {
     minimumFractionDigits: 2,
   });
 
-  const { data } = useQuery(CURRENCY);
-
-  const localCurrencyList = localStorage.getItem('currencyList');
-  const [currencyList, setCurrencyList] = useState(
-    localCurrencyList ? JSON.parse(localCurrencyList) : ['USD']
-  );
-
-  useEffect(() => {
-    setCurrencyList(
-      (data && data.currency) || (localCurrencyList ? JSON.parse(localCurrencyList) : ['USD'])
-    );
-
-    localStorage.setItem('currencyList', JSON.stringify(currencyList));
-  }, [data, currencyList, localCurrencyList, currency]);
+  const { data, loading: loadingCurrency } = useQuery(CURRENCY);
 
   const productList = mapProductIdToProduct(products);
 
@@ -95,11 +82,15 @@ function Cart() {
           value={currency}
           name="currency"
         >
-          {currencyList.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
+          {!loadingCurrency ? (
+            data.currency.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))
+          ) : (
+            <option value="USD">USD</option>
+          )}
         </select>
       </div>
       <div className="cart__items">
