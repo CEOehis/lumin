@@ -1,4 +1,5 @@
 import React, { createContext, useReducer } from 'react';
+import PropTypes from 'prop-types';
 import cartReducer from '../reducers/cart.reducer';
 
 const CartContext = createContext(null);
@@ -8,6 +9,7 @@ const cart = cartItems ? JSON.parse(cartItems) : [];
 
 const initialState = {
   cart,
+  showCart: false,
 };
 
 const CartProvider = ({ children }) => {
@@ -18,11 +20,11 @@ const CartProvider = ({ children }) => {
     dispatch,
   };
 
-  return (
-    <CartContext.Provider value={{ name: 'Celestine', ...contextValues }}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={{ ...contextValues }}>{children}</CartContext.Provider>;
+};
+
+CartProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export { CartContext };
