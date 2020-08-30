@@ -10,6 +10,7 @@ const cart = cartItems ? JSON.parse(cartItems) : [];
 const initialState = {
   cart,
   showCart: false,
+  currency: 'USD',
 };
 
 const CartProvider = ({ children }) => {

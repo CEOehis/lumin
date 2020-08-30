@@ -3,14 +3,15 @@ import PropTypes from 'prop-types';
 import { CartContext } from '../contexts/cart.context';
 import { addToCart, setDisplayCart } from '../actions/cart.action';
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-});
-
 function Product({ product }) {
-  const { dispatch } = useContext(CartContext);
+  const { cartState, dispatch } = useContext(CartContext);
+  const { currency } = cartState;
+
+  const formatter = new Intl.NumberFormat(window.navigator.language, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+  });
 
   function addItemToCart() {
     const payload = {

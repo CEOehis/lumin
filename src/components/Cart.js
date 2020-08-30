@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { CartContext } from '../contexts/cart.context';
-import { setDisplayCart } from '../actions/cart.action';
+import { setDisplayCart, setCurrency } from '../actions/cart.action';
 import CartItem from './CartItem';
 
 const CURRENCY = gql`
@@ -10,17 +10,15 @@ const CURRENCY = gql`
   }
 `;
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-});
-
-// TODO: Get user locale and query appropriate currency
-
 function Cart() {
   const { cartState, dispatch } = useContext(CartContext);
-  const { cart, showCart } = cartState;
+  const { currency, cart, showCart } = cartState;
+
+  const formatter = new Intl.NumberFormat(window.navigator.language, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+  });
 
   const { data } = useQuery(CURRENCY);
   const [currencyList, setCurrencyList] = useState(['USD']);
@@ -48,10 +46,15 @@ function Cart() {
         <p>Your Cart</p>
       </div>
       <div className="cart__currency">
-        <select name="currency">
-          {currencyList.map((currency) => (
-            <option key={currency} value={currency}>
-              {currency}
+        <select
+          onChange={(e) => {
+            dispatch(setCurrency(e.target.value));
+          }}
+          name="currency"
+        >
+          {currencyList.map((item) => (
+            <option key={item} value={item}>
+              {item}
             </option>
           ))}
         </select>

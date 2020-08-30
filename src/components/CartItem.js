@@ -3,14 +3,15 @@ import PropTypes from 'prop-types';
 import { CartContext } from '../contexts/cart.context';
 import { removeFromCart, decrementQuantity, incrementQuantity } from '../actions/cart.action';
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-});
-
 function CartItem({ item }) {
-  const { dispatch } = useContext(CartContext);
+  const { cartState, dispatch } = useContext(CartContext);
+  const { currency } = cartState;
+
+  const formatter = new Intl.NumberFormat(window.navigator.language, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+  });
 
   function removeItem() {
     dispatch(removeFromCart(item));
@@ -44,7 +45,7 @@ function CartItem({ item }) {
               +
             </button>
           </div>
-          <p>{formatter.format(item.price)}</p>
+          <p>{formatter.format(item.qty * item.price)}</p>
         </div>
       </div>
       <div className="product-image">

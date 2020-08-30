@@ -36,3 +36,13 @@ export const setDisplayCart = (payload) => {
     payload,
   };
 };
+
+export const setCurrency = (payload) => ({
+  type: types.SET_CURRENCY,
+  payload,
+});
+
+export const updateCartPrices = (payload) => ({
+  type: types.UPDATE_CART_PRICES,
+  payload,
+});
