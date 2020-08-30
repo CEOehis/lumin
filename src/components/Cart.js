@@ -67,18 +67,20 @@ function Cart() {
           <CartItem key={cartItem.id} item={cartItem} />
         ))}
       </div>
-      <div className="checkout">
-        <div className="total">
-          <p>Subtotal</p>
-          <p>{formatter.format(calculateSubTotal())}</p>
+      {cart.length ? (
+        <div className="checkout">
+          <div className="total">
+            <p>Subtotal</p>
+            <p>{formatter.format(calculateSubTotal())}</p>
+          </div>
+          <button className="checkout__button checkout__button-light" type="button">
+            Make this a subscription (Save 20%)
+          </button>
+          <button className="checkout__button checkout__button-dark" type="button">
+            Proceed to Checkout
+          </button>
         </div>
-        <button className="checkout__button checkout__button-light" type="button">
-          Make this a subscription (Save 20%)
-        </button>
-        <button className="checkout__button checkout__button-dark" type="button">
-          Proceed to Checkout
-        </button>
-      </div>
+      ) : null}
     </div>
   );
 }
