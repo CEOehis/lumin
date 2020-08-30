@@ -22,7 +22,14 @@ function ProductList() {
   });
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
+  if (error) {
+    return (
+      <>
+        <p>Unable to fetch Products with this currency, {currency}.</p>
+        <p>Please reload this page to continue</p>
+      </>
+    );
+  }
 
   return (
     <div className="main">

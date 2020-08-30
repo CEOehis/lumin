@@ -55,7 +55,8 @@ function Cart() {
     localStorage.setItem('currency', 'USD');
     return (
       <div className={`cart ${showCart ? 'cart__expanded' : 'cart__collapsed'}`}>
-        <p>Error</p>
+        <p>Unable to fetch Products with this currency, {currency}.</p>
+        <p>Please reload this page to continue</p>
       </div>
     );
   }
