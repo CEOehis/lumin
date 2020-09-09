@@ -147,7 +147,7 @@ button {
 }
 
 .cart__items {
-  overflow: scroll;
+  overflow-y: auto;
   flex-grow: 1;
 }
 

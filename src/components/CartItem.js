@@ -1,17 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { CartContext } from '../contexts/cart.context';
+import { useCart } from '../contexts/cart.context';
 import { removeFromCart, decrementQuantity, incrementQuantity } from '../actions/cart.action';
+import formatAsCurrency from '../utils/formatAsCurrency';
 
 function CartItem({ item }) {
-  const { cartState, dispatch } = useContext(CartContext);
+  const [cartState, dispatch] = useCart();
   const { currency } = cartState;
-
-  const formatter = new Intl.NumberFormat(window.navigator.language, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  });
 
   function removeItem() {
     dispatch(removeFromCart(item));
@@ -45,7 +40,7 @@ function CartItem({ item }) {
               +
             </button>
           </div>
-          <p>{formatter.format(item.qty * item.price)}</p>
+          <p>{formatAsCurrency(item.qty * item.price, currency)}</p>
         </div>
       </div>
       <div className="product-image">

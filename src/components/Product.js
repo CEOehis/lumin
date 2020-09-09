@@ -1,17 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { CartContext } from '../contexts/cart.context';
+import { useCart } from '../contexts/cart.context';
 import { addToCart, setDisplayCart } from '../actions/cart.action';
+import formatAsCurrency from '../utils/formatAsCurrency';
 
 function Product({ product }) {
-  const { cartState, dispatch } = useContext(CartContext);
+  const [cartState, dispatch] = useCart();
   const { currency } = cartState;
-
-  const formatter = new Intl.NumberFormat(window.navigator.language, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  });
 
   function addItemToCart() {
     const payload = {
@@ -32,7 +27,7 @@ function Product({ product }) {
       </div>
       <div>
         <p className="product-title">{product.title}</p>
-        <p className="product-price">From {formatter.format(product.price)}</p>
+        <p className="product-price">From {formatAsCurrency(product.price, currency)}</p>
         <div>
           <button onClick={addItemToCart} className="action" type="button">
             Add to Cart

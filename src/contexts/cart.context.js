@@ -1,8 +1,6 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
 import cartReducer from '../reducers/cart.reducer';
-
-const CartContext = createContext(null);
 
 const cartItems = localStorage.getItem('cart');
 const cart = cartItems ? JSON.parse(cartItems) : [];
@@ -16,20 +14,42 @@ const initialState = {
   currency,
 };
 
+const CartStateContext = createContext();
+const CartDispatchContext = createContext();
+
 const CartProvider = ({ children }) => {
-  const [cartState, dispatch] = useReducer(cartReducer, initialState);
-
-  const contextValues = {
-    cartState,
-    dispatch,
-  };
-
-  return <CartContext.Provider value={{ ...contextValues }}>{children}</CartContext.Provider>;
+  const [state, dispatch] = useReducer(cartReducer, initialState);
+  return (
+    <CartStateContext.Provider value={state}>
+      <CartDispatchContext.Provider value={dispatch}>{children}</CartDispatchContext.Provider>
+    </CartStateContext.Provider>
+  );
 };
+
+function useCartState() {
+  const context = useContext(CartStateContext);
+  if (context === undefined) {
+    throw new Error('useCartState must be used within a CartProvider');
+  }
+
+  return context;
+}
+
+function useCartDispatch() {
+  const context = useContext(CartDispatchContext);
+  if (context === undefined) {
+    throw new Error('useCartDispatch must be used within a CartProvider');
+  }
+
+  return context;
+}
+
+function useCart() {
+  return [useCartState(), useCartDispatch()];
+}
 
 CartProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export { CartContext };
-export default CartProvider;
+export { CartProvider, useCartState, useCartDispatch, useCart };

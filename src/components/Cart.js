@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useQuery, gql } from '@apollo/client';
-import { CartContext } from '../contexts/cart.context';
 import { setDisplayCart, setCurrency } from '../actions/cart.action';
 import CartItem from './CartItem';
-import { ProductsContext } from '../contexts/products.context';
+import { useProductState } from '../contexts/products.context';
+import { useCartDispatch, useCartState } from '../contexts/cart.context';
+import formatAsCurrency from '../utils/formatAsCurrency';
 
 const CURRENCY = gql`
   query GetCurrency {
@@ -25,17 +26,9 @@ function mapProductIdToProduct(products) {
 }
 
 function Cart() {
-  const {
-    cartState: { currency, cart, showCart },
-    dispatch,
-  } = useContext(CartContext);
-  const { products, loading, error } = useContext(ProductsContext);
-
-  const formatter = new Intl.NumberFormat(window.navigator.language, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  });
+  const { currency, cart, showCart } = useCartState();
+  const dispatch = useCartDispatch();
+  const { products, loading, error } = useProductState();
 
   const { data, loading: loadingCurrency } = useQuery(CURRENCY);
 
@@ -106,7 +99,7 @@ function Cart() {
         <div className="checkout">
           <div className="total">
             <p>Subtotal</p>
-            <p>{formatter.format(calculateSubTotal())}</p>
+            <p>{formatAsCurrency(calculateSubTotal(), currency)}</p>
           </div>
           <button className="checkout__button checkout__button-light" type="button">
             Make this a subscription (Save 20%)

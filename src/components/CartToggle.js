@@ -1,12 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { setDisplayCart } from '../actions/cart.action';
-import { CartContext } from '../contexts/cart.context';
+import { useCartState, useCartDispatch } from '../contexts/cart.context';
 
 function CartToggle() {
-  const {
-    cartState: { cart, showCart },
-    dispatch,
-  } = useContext(CartContext);
+  const { cart, showCart } = useCartState();
+  const dispatch = useCartDispatch();
 
   function toggleCart() {
     dispatch(setDisplayCart(!showCart));

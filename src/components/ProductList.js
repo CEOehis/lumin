@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useQuery, gql } from '@apollo/client';
 import Product from './Product';
-import { CartContext } from '../contexts/cart.context';
+import { useCartState } from '../contexts/cart.context';
 
 export const PRODUCTS = gql`
   query GetProducts($currency: Currency!) {
@@ -15,8 +15,7 @@ export const PRODUCTS = gql`
 `;
 
 function ProductList() {
-  const { cartState } = useContext(CartContext);
-  const { currency } = cartState;
+  const { currency } = useCartState();
   const { loading, error, data } = useQuery(PRODUCTS, {
     variables: { currency },
   });

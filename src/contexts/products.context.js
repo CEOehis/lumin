@@ -2,13 +2,12 @@ import React, { createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import { PRODUCTS } from '../components/ProductList';
-import { CartContext } from './cart.context';
+import { useCartState } from './cart.context';
 
-const ProductsContext = createContext(null);
+const ProductsContext = createContext();
 
 const ProductsProvider = ({ children }) => {
-  const { cartState } = useContext(CartContext);
-  const { currency } = cartState;
+  const { currency } = useCartState();
   const { loading, error, data } = useQuery(PRODUCTS, {
     variables: { currency },
   });
@@ -24,9 +23,17 @@ const ProductsProvider = ({ children }) => {
   );
 };
 
+function useProductState() {
+  const context = useContext(ProductsContext);
+  if (context === undefined) {
+    throw new Error('useCartState must be used within a CartProvider');
+  }
+
+  return context;
+}
+
 ProductsProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export { ProductsContext };
-export default ProductsProvider;
+export { useProductState, ProductsProvider };
